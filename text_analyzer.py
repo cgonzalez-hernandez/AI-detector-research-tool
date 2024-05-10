@@ -321,17 +321,22 @@ class HandleInput:
 
             # Update the API key in the post_parameters dictionary
             key_location = api_info["post_parameters"]["API_KEY_POINTER"]["location"]
+            key_name = api_info["post_parameters"]["API_KEY_POINTER"]["key_name"]
+            # Ensure that the API key is not None before concatenating
+            if api_info["post_parameters"]["API_KEY_POINTER"]["value"] is not None:
+                key_value = api_info["post_parameters"]["API_KEY_POINTER"]["value"]
+            else:
+                key_value = ""
+
             if key_location == "headers":
-                api_info["post_parameters"]["headers"][api_info["post_parameters"]["API_KEY_POINTER"]["key_name"]] = (
-                    api_info["post_parameters"]["API_KEY_POINTER"]["value"] + api_key
-                )
+                api_info["post_parameters"]["headers"][key_name] = key_value + api_key
             elif key_location == "body":
-                api_info["post_parameters"]["body"][api_info["post_parameters"]["API_KEY_POINTER"]["key_name"]] = (
-                    api_info["post_parameters"]["API_KEY_POINTER"]["value"] + api_key
-                )
+                api_info["post_parameters"]["body"][key_name] = key_value + api_key
+
             del api_info["post_parameters"]["API_KEY_POINTER"]
             # Add the modified API info to the api_settings dictionary
             api_settings[api_name] = api_info
+
         return api_settings
 
     def handle_csv(self, input_csv, output_csv=None):
@@ -474,7 +479,7 @@ def text_analyzer_main():
 
     Returns
     -------
-    output_csv: the output CSV file path
+    output_csv: /Users/cgonzalez-hernandez/Documents/GitHub/AI-detector-research-tool/output_csv.csv
     """
     get_user_input = HandleInput()
     print("Welcome to the API Interaction Program. Please check the following API endpoints you wish to use: ")
